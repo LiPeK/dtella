@@ -105,7 +105,7 @@ def runClient(dc_port):
         if dch:
             dch.bot.say(
                 "Something bad happened.  You might want to email this to "
-                "bugs@dtella.org so we'll know about it:\n"
+                "dtella.ms@gmail.com so we'll know about it:\n"
                 "Version: %s %s\n%s" %
                 (local.hub_name, get_version_string()[3:], text))
 
