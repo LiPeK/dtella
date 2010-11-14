@@ -26,7 +26,7 @@ Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
 
 # Use this prefix for filenames when building executables and installers.
 # It will be concatenated with the version number below.
-build_prefix = "dtella-purdue-"
+build_prefix = "dtella-ms-"
 
 # Dtella version number.
 version = "SVN"
@@ -34,12 +34,12 @@ version = "SVN"
 # This is an arbitrary string which is used for encrypting packets.
 # It essentially defines the uniqueness of a Dtella network, so every
 # network should have its own unique key.
-network_key = 'PurdueDtella-11'
+network_key = 'DtellaMS'
 
 # This is the name of the "hub" which is seen by the user's DC client.
 # "Dtella@____" is the de-facto standard, but nobody's stopping you
 # from picking something else.
-hub_name = "Dtella@Purdue"
+hub_name = "Dtella@MS"
 
 # This enforces a maximum cap for the 'minshare' value which appears in DNS.
 # It should be set to some sane value to prevent the person managing DNS from
@@ -50,7 +50,7 @@ minshare_cap = 100 * (1024**3)   # (=100GiB)
 # the network.  Make sure you get this right initially, because you can't
 # make changes once the program has been distributed.  In the unlikely event
 # that you don't want any filtering, use ['0.0.0.0/0']
-allowed_subnets = ['128.210.0.0/15', '128.10.0.0/16', '128.46.0.0/16']
+allowed_subnets = ['192.168.0.0/16']
 
 # Here we configure an object which pulls 'Dynamic Config' from some source
 # at a known fixed location on the Internet.  This config contains a small
@@ -58,19 +58,20 @@ allowed_subnets = ['128.210.0.0/15', '128.10.0.0/16', '128.46.0.0/16']
 # IRC bridge's public key.
 
 # -- Use DNS TXT Record --
-import dtella.modules.pull_dns
-dconfig_puller = dtella.modules.pull_dns.DnsTxtPuller(
-    # Some public DNS servers to query through. (GTE and OpenDNS)
-    servers = ['4.2.2.1','4.2.2.2','208.67.220.220','208.67.222.222'],
-    # Hostname where the DNS TXT record resides.
-    hostname = "purdue.config.dtella.org"
-    )
+##import dtella.modules.pull_dns
+##dconfig_puller = dtella.modules.pull_dns.DnsTxtPuller(
+##    # Some public DNS servers to query through. (GTE and OpenDNS)
+##    servers = ['4.2.2.1','4.2.2.2','208.67.220.220','208.67.222.222'],
+##    # Hostname where the DNS TXT record resides.
+##    hostname = "purdue.config.dtella.org"
+##
+##    )
 
 # -- Use Google Spreadsheet --
-##import dtella.modules.pull_gdata
-##dconfig_puller = dtella.modules.pull_gdata.GDataPuller(
-##    sheet_key = "..."
-##    )
+import dtella.modules.pull_gdata
+dconfig_puller = dtella.modules.pull_gdata.GDataPuller(
+    sheet_key = "..."
+    )
 
 # Enable this if you can devise a meaningful mapping from a user's hostname
 # to their location.  Locations are displayed in the "Connection / Speed"
