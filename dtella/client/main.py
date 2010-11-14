@@ -81,6 +81,7 @@ class DtellaMain_Client(core.DtellaMain_Base):
         # DNS Handler
         self.dcfg = dtella.client.pull_dconfig.DynamicConfigPuller(self)
 
+        self.version_info_published = False
 
     def reconnectDesired(self):
         return (self.dch or self.state.persistent)
@@ -188,6 +189,17 @@ class DtellaMain_Client(core.DtellaMain_Base):
                 for ipp in ipps:
                     ad = Ad().setRawIPPort(ipp)
                     self.state.refreshPeer(ad, age)
+
+            dch = self.dch
+            if dch and not self.version_info_published and self.dcfg.version:
+                def out(text):
+			        dch.pushStatus(text)
+
+                url = self.dcfg.version[2]
+                out("")
+                out("Link do pobrania Dtella-MS: %s" % url)
+                out("")
+                self.version_info_published = True
 
             self.startInitialContact()
 
