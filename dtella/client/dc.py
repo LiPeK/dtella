@@ -1586,12 +1586,14 @@ class DtellaBot(object):
             if peers_only and not n.is_peer:
                 continue
             
+            new_location = n.location.split(' ')[0]
+            
             try:
-                ucount[n.location] += 1
-                bcount[n.location] += n.shared
+                ucount[new_location] += 1
+                bcount[new_location] += n.shared
             except KeyError:
-                ucount[n.location] = 1
-                bcount[n.location] = n.shared
+                ucount[new_location] = 1
+                bcount[new_location] = n.shared
 
         # Collect final values
         values = {}

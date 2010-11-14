@@ -86,44 +86,49 @@ use_locations = True
 
 # DNS servers which will be used for doing IP->Hostname reverse lookups.
 # These should be set to your school's local DNS servers, for efficiency.
-rdns_servers = ['128.210.11.5','128.210.11.57','128.10.2.5','128.46.154.76']
+rdns_servers = []
 
 # Customized data for our implementation of hostnameToLocation
 import re
-suffix_re = re.compile(r".*\.([^.]+)\.purdue\.edu$")
-prefix_re = re.compile(r"^([a-z]{1,6}).*\.purdue\.edu$")
+name_re = re.compile(r".*\.([^.]+)\..{3}\.edu\.pl")
+ip_re = re.compile(r"192\.168\.(\d{1,3})\..*")
 
-pre_table = {
-    'erht':'Earhart', 'cary':'Cary', 'hill':'Hillenbrand',
-    'shrv':'Shreve', 'tark':'Tarkington', 'wily':'Wiley',
-    'mrdh':'Meredith', 'wind':'Windsor', 'harr':'Harrison',
-    'hawk':'Hawkins', 'mcut':'McCutcheon', 'owen':'Owen',
-    'hltp':'Hilltop', 'yong':'Young', 'pvil':'P.Village',
-    'pal':'AirLink', 'dsl':'DSL', 'vpn':'VPN'}
+# part of hostname -> location name
+name_table = {
+    'ds1':'Location_1',
+    'ds2':'Location_2'}
 
-suf_table = {
-    'cerias':'CERIAS', 'cs':'CS', 'ecn':'ECN', 'hfs':'HFS',
-    'ics':'ITaP Lab', 'lib':'Library', 'mgmt':'Management',
-    'uns':'News', 'cfs':'CFS'}
+# if hostname is not found, try conert ip to location
+# 3rd part of IP mask -> location name
+ip_table = {
+    48:'Location_1',
+    56:'Location_2'}
 
-def hostnameToLocation(hostname):
+def hostnameToLocation(hostname, textIP):
     # Convert a hostname into a human-readable location name.
-
     if hostname:
-
-        suffix = suffix_re.match(hostname)
-        if suffix:
+        name = name_re.match(hostname)
+        if name:
             try:
-                return suf_table[suffix.group(1)]
+                return name_table[name.group(1).lower()]+" ("+hostname+")"
             except KeyError:
                 pass
-        
-        prefix = prefix_re.match(hostname)
-        if prefix:
+    if textIP:
+        ip = ip_re.match(textIP)
+        if ip:
             try:
-                return pre_table[prefix.group(1)]
+                return ip_table[int(ip.group(1))&0xff]+" ("+textIP+")"
+            except KeyError:
+                pass
+            try:
+                return ip_table[int(ip.group(1))&0xf8]+" ("+textIP+")"
+            except KeyError:
+                pass
+            try:
+                return ip_table[int(ip.group(1))&0xf0]+" ("+textIP+")"
             except KeyError:
                 pass
 
-    return "Unknown"
+    return "[Nieznany] ("+(hostname or textIP or "no IP")+")"
+
 

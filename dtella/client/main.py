@@ -223,7 +223,9 @@ class DtellaMain_Client(core.DtellaMain_Base):
 
             # Use local_config to transform this hostname into a
             # human-readable location
-            loc = local.hostnameToLocation(hostname)
+            # use ip if hostname is not available
+            # this requres to customize hostnameToLocation function in local_config
+            loc = local.hostnameToLocation(hostname, my_ip)
 
             # If we got a location, save it, otherwise dump the
             # dictionary entry
