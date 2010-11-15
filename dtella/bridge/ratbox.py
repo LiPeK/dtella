@@ -673,6 +673,8 @@ class RatboxIRCServer(LineOnlyReceiver):
             n = self.ism.findDtellaNode(inick=target)
             if n:
                 self.ism.sendPrivateMessage(n, src_nick, text, flags)
+            elif target == self.ism.bot_user.uuid:
+                self.handleBridgeCommand(src_u, text)
 
     def handleCmd_NOTICE(self, prefix, args):
         src_uuid = prefix
@@ -836,6 +838,15 @@ class RatboxIRCServer(LineOnlyReceiver):
             self.shutdown_deferred.callback("Bye!")
 
         self.isFirstPing = True
+
+    def handleBridgeCommand(self, src_u, command):
+        if not 'o' in src_u.chanmodes:
+            return
+        
+        def privToIrcUser(user, text):
+            self.sendLine(":%s PRIVMSG %s :%s" % (self.ism.bot_user.uuid, src_u.uuid, text))
+        
+        privToIrcUser(src_u, "Sorry, not implemented yet :(")
 
 class HostMasker(object):
     # UnrealIRCd-compatible hostmasking.
