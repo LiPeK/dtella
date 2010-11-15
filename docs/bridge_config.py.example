@@ -3,10 +3,13 @@
 # the bridge, but otherwise kept as secret as possible.
 
 # Service config. Supported servers are InspIRCd and UnrealIRCd
-# Currently InspIRCd is the only option. 
+# Now, there is also a Ratbox ircd supported.
+
+# Peer with an Ratbox server.  See dtella/bridge/ratbox.py
+service_class = "dtella.bridge.ratbox.RatboxConfig"
 
 # Peer with an InspIRCd server.  See dtella/bridge/inspircd.py
-service_class = "dtella.bridge.inspircd.InspIRCdConfig"
+#service_class = "dtella.bridge.inspircd.InspIRCdConfig"
 
 # Peer with an UnrealIRCd server. See dtella/bridge/unreal.py
 # service_class = "dtella.bridge.inspircd.UnrealConfig"
