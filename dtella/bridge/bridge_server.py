@@ -956,7 +956,7 @@ class IRCStateManager(object):
         osm.cms.flushQueue(n)
 
     def event_RemoveNick(self, n, reason):
-        if self.uuid_generator:
+        if self.uuid_generator and hasattr(n, 'uuid'):
             del self.dt_uuids[n.uuid.lower()]
 
         if not hasattr(n, 'inick'):
