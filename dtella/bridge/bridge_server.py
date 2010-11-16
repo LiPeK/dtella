@@ -1042,7 +1042,7 @@ class IRCStateManager(object):
             for q, reason in self.qlines.itervalues():
                 if q.match(inick):
                     raise NickError(
-                        "Nick '%s' is Q-lined: %s" % (inick, reason))
+                        "Nick '%s' is Q-lined: %s" % (n.nick, reason))
 
         except NickError, e:
             LOG.debug("Bad nick: %s %s" % (n.nick, re.sub(r'\n', r'\\n', str(e))))
