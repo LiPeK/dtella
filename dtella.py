@@ -62,7 +62,7 @@ def addTwistedErrorCatcher(handler):
 
 def runBridge():
     import dtella.bridge_config as cfg
-    setLogFile(cfg.file_base + ".log", 4<<20, 4)
+    setLogFile(cfg.file_base + ".log", 4<<20, 40)
     LOG.debug("Bridge Logging Manager Initialized")
 
     addTwistedErrorCatcher(LOG.critical)
@@ -79,7 +79,7 @@ def runBridge():
 
 def runDconfigPusher():
     import dtella.bridge_config as cfg
-    setLogFile(cfg.file_base + ".log", 4<<20, 4)
+    setLogFile(cfg.file_base + ".log", 4<<20, 40)
     LOG.debug("Dconfig Pusher Logging Manager Initialized")
 
     addTwistedErrorCatcher(LOG.critical)
