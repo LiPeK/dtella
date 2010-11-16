@@ -129,3 +129,11 @@ dconfig_push_func = dtella.modules.push_textfile.TextFileUpdater(
 ##    password = "password",
 ##    host_id = 12345,
 ##    ).update
+
+# Nick to IP/Subnet match table
+# ip/cdir -> dnick_match
+# dtella nick should start with proper prefix
+ip2nick = {
+    '192.168.0.0/24'   : '[prefix01]',
+    '192.168.1.0/24'   : '[prefix02]'
+}

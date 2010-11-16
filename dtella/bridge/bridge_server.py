@@ -1044,6 +1044,17 @@ class IRCStateManager(object):
                     raise NickError(
                         "Nick '%s' is Q-lined: %s" % (n.nick, reason))
 
+            node_ip = Ad().setRawIPPort(n.ipp).getTextIP()
+            for ip_group in cfg.ip2nick:
+                if ipv4.IsSubsetOf(ipv4.CidrStringToIPMask(node_ip), ipv4.CidrStringToIPMask(ip_group)):
+                    nick_match = cfg.ip2nick[ip_group]
+                    if not n.nick.lower().startswith(nick_match.lower()):
+                        raise NickError(
+                            "\n\nNick '%s' posiada nieprawidlowy numer akademika!\n"
+                            "Twoj nick powinien zawierac nastepujacy numer: %s\n" % (n.nick, nick_match.upper()))
+                    else:
+                        break
+
         except NickError, e:
             LOG.debug("Bad nick: %s %s" % (n.nick, re.sub(r'\n', r'\\n', str(e))))
             # Bad nick.  KICK!
