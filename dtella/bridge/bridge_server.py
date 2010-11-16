@@ -197,7 +197,7 @@ ircstrip_re = re.compile(
     "\x03[0-9]{1,2}(,[0-9]{1,2})?|[\x00-\x1F]")
 
 def irc_strip(text):
-    return ircstrip_re.sub('', text)
+    return ircstrip_re.sub('', text).decode('utf-8','replace').encode('cp1250','replace')
 
 
 # Make sure IRC bot has the right prefix.  This will let other bridges
@@ -874,7 +874,7 @@ class IRCStateManager(object):
             return False
 
         if self.ircs:
-            self.ircs.event_NodeSetTopic(n, topic)
+            self.ircs.event_NodeSetTopic(n, topic.decode('cp1250','replace').encode('utf-8','replace'))
 
         self.setTopic(n.inick, topic)
         return True
@@ -890,7 +890,7 @@ class IRCStateManager(object):
             return False
 
         if self.ircs:
-            self.ircs.event_Message(n, u, text)
+            self.ircs.event_Message(n, u, text.decode('cp1250','replace').encode('utf-8','replace'))
             return True
 
         return False
@@ -981,6 +981,7 @@ class IRCStateManager(object):
         if not self.ircs:
             return
 
+        text = text.decode('cp1250','replace').encode('utf-8','replace')
         if flags & core.NOTICE_BIT:
             self.ircs.event_Notice(n, None, text)
         elif flags & core.SLASHME_BIT:
