@@ -941,8 +941,8 @@ class IRCStateManager(object):
             LOG.debug("Channel ban: %s %s" % (n.nick, Ad().setRawIPPort(n.ipp).getTextIPPort()))
             chunks = []
             osm.bsm.addKickChunk(
-                chunks, n, cfg.irc_to_dc_bot, "Channel Ban",
-                rejoin=True, silent=True)
+                chunks, n, cfg.irc_to_dc_bot, "Masz BAN'a! Przeczytaj regulamin!",
+                rejoin=False, silent=True)
             osm.bsm.sendBridgeChange(chunks)
 
             # Remove from Dtella nick list
