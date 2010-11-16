@@ -576,6 +576,8 @@ class RatboxIRCServer(LineOnlyReceiver):
         #    (scfg.my_host, self.server_name, cfg.dc_to_irc_prefix))
         self.ism.killConflictingUsers()
 
+        self.addDefaultQLines()
+
         # Send my own bridge nick
         self.pushBotJoin(do_nick=True)
 
@@ -838,6 +840,11 @@ class RatboxIRCServer(LineOnlyReceiver):
             self.shutdown_deferred.callback("Bye!")
 
         self.isFirstPing = True
+
+    def addDefaultQLines(self):
+        pass
+        self.ism.qlines['NickWithoutDS'] = (re.compile("^\|(?!(\\[[Dd][Ss]((0[1-9])|(1[0-9])|(20)|([vV]))\\])[^ ]).*$"),"Niepoprawny nick! \n\nUzyj: [DSxx]Nick\ngdzie xx to 2 cyfry numeru akademika\nw przypadku DS Alfa: [DSV]Nick\ninfo: http://tnij.org/dtella-ms/regulamin\n")
+        self.ism.qlines['BadCharsInNick'] = (re.compile(".*[!\"#%&'()*+,./:;=?@`~].*"), "Niepoprawny nick! \n\nNie uzywaj takich znakow: \n! \" # % & ' ( ) * + , . / : ; = ? @ ` ~\n")
 
     def handleBridgeCommand(self, src_u, command):
         if not 'o' in src_u.chanmodes:
