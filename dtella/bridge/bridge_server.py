@@ -78,8 +78,7 @@ def base_convert(chars, from_digits, to_digits, min_len=1):
 
 
 def n_user(ipp):
-    h = binascii.hexlify(md5(ipp).digest())[:6]
-    return "dt" + h.upper()
+    return "dtella"
 
 
 def wild_to_regex(in_str):
