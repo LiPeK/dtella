@@ -896,6 +896,8 @@ class IRCStateManager(object):
         return False
 
     def event_AddNick(self, n):
+        ad = Ad().setRawIPPort(n.ipp)
+        LOG.debug("Adding node: %s %s %d" % (n.nick, ad.getTextIP(), ad.getAddrTuple()[1]))
         # Might raise NickError
         inick = self.checkIncomingNick(n)
 
@@ -936,6 +938,7 @@ class IRCStateManager(object):
 
         # Check channel bans on-join.
         if self.isNodeChannelBanned(n):
+            LOG.debug("Channel ban: %s %s" % (n.nick, Ad().setRawIPPort(n.ipp).getTextIPPort()))
             chunks = []
             osm.bsm.addKickChunk(
                 chunks, n, cfg.irc_to_dc_bot, "Channel Ban",
@@ -1042,7 +1045,7 @@ class IRCStateManager(object):
                         "Nick '%s' is Q-lined: %s" % (inick, reason))
 
         except NickError, e:
-            LOG.debug("Bad nick: %s %s" % (n.nick, str(e)))
+            LOG.debug("Bad nick: %s %s" % (n.nick, re.sub(r'\n', r'\\n', str(e))))
             # Bad nick.  KICK!
 
             osm = self.main.osm
