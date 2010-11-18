@@ -329,6 +329,10 @@ class NotOnline(Exception):
     pass
 
 
+class BadHostnameError(Exception):
+    pass
+
+
 class User(object):
     uuid = None
     def __init__(self, inick, uuid):
@@ -532,7 +536,8 @@ class IRCStateManager(object):
         try:
             osm = self.getOnlineStateManager()
         except NotOnline:
-            return False
+            # Removal was successful, even if it's not broadcasted.
+            return True
 
         chunks = []
         if message:
@@ -811,7 +816,7 @@ class IRCStateManager(object):
             LOG.info("Found a conflicting Q-line: %s" % nickmask)
 
             # If any nicks exist under that Q-line, we'll need to abort.
-            for u in self.users.itervalues():
+            for u in set(self.users.itervalues()):
                 if q.match(u.inick):
                     LOG.info("... and a nick to go with it: %s" % u.inick)
                     return True
@@ -830,7 +835,7 @@ class IRCStateManager(object):
     def killConflictingUsers(self):
         # Find any reserved nicks, and KILL them.
         CHECK(self.ircs and not self.syncd)
-        bad_users = [u for u in self.users.itervalues()
+        bad_users = [u for u in set(self.users.itervalues())
                      if matches_dc_to_irc_prefix(u.inick)]
         LOG.info("Conflicting users: %r" % bad_users)
         for u in bad_users:
@@ -915,24 +920,29 @@ class IRCStateManager(object):
     def bridgeevent_AddNickWithHostname(self, n, hostname):
         # Set up hostname and hostmask.
         scfg = getServiceConfig()
+        ad = Ad().setRawIPPort(n.ipp)
 
-        if hostname is None:
-            n.hostname = Ad().setRawIPPort(n.ipp).getTextIP()
-            try:
-                hm = scfg.hostmasker
-            except AttributeError:
-                n.hostmask = n.hostname
-            else:
-                n.hostmask = hm.maskIPv4(n.hostname)
-        else:
+        # Set regular hostname, falling back to IP if none exists.
+        if hostname:
             n.hostname = hostname
-            try:
-                hm = scfg.hostmasker
-            except AttributeError:
-                n.hostmask = n.hostname
-            else:
-                n.hostmask = hm.maskHostname(n.hostname)
+        else:
+            n.hostname = ad.getTextIP()
 
+        # Set cloaked hostname.
+        try:
+            hm = scfg.hostmasker
+        except AttributeError:
+            # Masking disabled.
+            n.hostmask = n.hostname
+        else:
+            # Masking enabled.
+            try:
+                if not hostname:
+                    raise BadHostnameError
+                n.hostmask = hm.maskHostname(hostname)
+            except BadHostnameError:
+                n.hostmask = hm.maskIPv4(ad)
+ 
         osm = self.getOnlineStateManager()
 
         # Check channel bans on-join.
@@ -1013,7 +1023,7 @@ class IRCStateManager(object):
                 self.bot_user, None, "Bridge lost connection to Dtella")
 
     def event_KickMe(self, lines, rejoin_time):
-        raise NotImplemented("Bridge can't be kicked.")
+        raise NotImplementedError("Bridge can't be kicked.")
 
     def shutdown(self):
         if self.ircs:
