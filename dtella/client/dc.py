@@ -42,6 +42,7 @@ import socket
 from zope.interface import implements
 from zope.interface.verify import verifyClass
 from dtella.common.interfaces import IDtellaStateObserver
+from dtella.common.replacer import searchAndReplace
 
 # Login Procedure
 # H>C $HubName
@@ -727,7 +728,9 @@ class DCHandler(BaseDCProtocol):
             return
 
         text = text.replace('\r\n','\n').replace('\r','\n')
-
+        ip = Ad().setRawIPPort(self.main.osm.me.ipp).getTextIP()
+        text = searchAndReplace(text, self.nick, ip)
+        
         for line in text.split('\n'):
 
             # Skip empty lines
@@ -981,6 +984,10 @@ class DCHandler(BaseDCProtocol):
 
 
     def event_ChatMessage(self, n, nick, text, flags):
+        ip = Ad().setRawIPPort(n.ipp).getTextIP()
+        text = searchAndReplace(text, nick, ip)
+        if not text:
+            return
         if flags & core.NOTICE_BIT:
             self.pushChatMessage(("*N# %s" % nick), text)
         elif flags & core.SLASHME_BIT:
